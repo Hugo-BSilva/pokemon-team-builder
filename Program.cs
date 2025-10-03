@@ -48,8 +48,9 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pokémon Team Builder API v1");
 
     });
-    app.UseHttpsRedirection();
 }
 
+app.UseCors("AllowLocalhost");
+app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();
