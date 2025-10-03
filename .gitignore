@@ -1,6 +1,6 @@
-# Excluir pastas de binário e objeto
-[Bb]in/
-[Oo]bj/
+# Ignorar pastas de build do .NET
+bin/
+obj/
 
 # Excluir pacotes NuGet e caches
 .nuget/
@@ -10,6 +10,7 @@
 .vssscc
 .suo
 *.user
+*.bak
 *.useros
 *.sln.docstates
 
