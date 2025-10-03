@@ -30,3 +30,6 @@ TestResults/
 
 # Visual Studio Code (opcional, se estiver usando VS Code)
 .vscode/
+
+# Docker build output
+/app/
