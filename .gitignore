@@ -1,0 +1,32 @@
+# Excluir pastas de binário e objeto
+[Bb]in/
+[Oo]bj/
+
+# Excluir pacotes NuGet e caches
+.nuget/
+*.nupkg
+.vs/
+.vspscc
+.vssscc
+.suo
+*.user
+*.useros
+*.sln.docstates
+
+# Excluir pastas de dependência do .NET
+**/node_modules/
+.npm/
+
+# Excluir configurações sensíveis e de usuário
+appsettings.Development.json
+appsettings.json.user
+appsettings.json.bak
+appsettings.*.user.json
+*.pfx # Certificados de assinatura
+
+# Excluir relatórios de teste
+TestResults/
+.trx
+
+# Visual Studio Code (opcional, se estiver usando VS Code)
+.vscode/
