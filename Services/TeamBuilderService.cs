@@ -9,7 +9,7 @@ public class TeamBuilderService : ITeamBuilderService
 {
     private readonly OpenAI.OpenAIClient _openAiClient;
 
-    private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
         PropertyNameCaseInsensitive = true,
         ReadCommentHandling = JsonCommentHandling.Skip,
@@ -95,56 +95,53 @@ public class TeamBuilderService : ITeamBuilderService
             """;
     }
 
-    private string GetExpectedJsonSchema()
-    {
-        return """
-    {
-      "type": "object",
-      "properties": {
-        "gameVersion": { "type": "string" },
-        "difficulty": { "type": "string" },
-        "team": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "pokemonName": { "type": "string" },
-              "pokedexNumber": { "type": "integer" },
-              "imageUrl": { "type": "string" },
-              "moves": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "name": { "type": "string" },
-                    "type": { "type": "string" },
-                    "power": { "type": "integer" },
-                    "method": { "type": "string" }
-                  },
-                  "required": ["name", "type", "power", "method"]
-                }
-              },
-              "matchups": {
+    private string GetExpectedJsonSchema() => """
+        {
+          "type": "object",
+          "properties": {
+            "gameVersion": { "type": "string" },
+            "difficulty": { "type": "string" },
+            "team": {
+              "type": "array",
+              "items": {
                 "type": "object",
                 "properties": {
-                  "weakAgainstLeaders": {
+                  "pokemonName": { "type": "string" },
+                  "pokedexNumber": { "type": "integer" },
+                  "imageUrl": { "type": "string" },
+                  "moves": {
                     "type": "array",
-                    "items": { "type": "string" }
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": { "type": "string" },
+                        "type": { "type": "string" },
+                        "power": { "type": "integer" },
+                        "method": { "type": "string" }
+                      },
+                      "required": ["name", "type", "power", "method"]
+                    }
                   },
-                  "strongAgainstLeaders": {
-                    "type": "array",
-                    "items": { "type": "string" }
+                  "matchups": {
+                    "type": "object",
+                    "properties": {
+                      "weakAgainstLeaders": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                      },
+                      "strongAgainstLeaders": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                      }
+                    },
+                    "required": ["weakAgainstLeaders", "strongAgainstLeaders"]
                   }
                 },
-                "required": ["weakAgainstLeaders", "strongAgainstLeaders"]
+                "required": ["pokemonName", "pokedexNumber", "imageUrl", "moves", "matchups"]
               }
-            },
-            "required": ["pokemonName", "pokedexNumber", "imageUrl", "moves", "matchups"]
-          }
+            }
+          },
+          "required": ["gameVersion", "difficulty", "team"]
         }
-      },
-      "required": ["gameVersion", "difficulty", "team"]
-    }
-    """;
-    }
+        """;
 }

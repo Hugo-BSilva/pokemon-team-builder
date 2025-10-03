@@ -18,6 +18,9 @@ obj/
 **/node_modules/
 .npm/
 
+# Ignorar pastas de configuração local
+Properties/
+
 # Excluir configurações sensíveis e de usuário
 appsettings.Development.json
 appsettings.json.user
