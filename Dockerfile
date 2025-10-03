@@ -1,25 +1,24 @@
-# 1. ESTÁGIO DE BUILD
-# Usa a imagem oficial do .NET SDK para compilar o código.
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+# Estágio 1: Build (Construção)
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /app
 
-# Copia o arquivo de projeto e restaura as dependências
-COPY ["pokemon-team-builder/pokemon-team-builder.csproj", "pokemon-team-builder/"]
-RUN dotnet restore "pokemon-team-builder/pokemon-team-builder.csproj"
+# 1. Copia apenas o arquivo de projeto (csproj) para o contêiner
+# O Docker o vê na raiz (o '.') e copia para a raiz do WORKDIR (/app).
+COPY pokemon-team-builder.csproj .
+RUN dotnet restore
 
-# Copia todo o código-fonte restante
+# 2. Copia todo o restante do código-fonte (Program.cs, Controllers, etc.)
+# O Docker o vê na raiz (o '.') e copia para a raiz do WORKDIR (/app).
 COPY . .
-WORKDIR "/src/pokemon-team-builder"
 
-# Publica a aplicação em modo Release
-RUN dotnet publish "pokemon-team-builder.csproj" -c Release -o /app/publish --no-restore
+# 3. Publica a aplicação
+# O comando agora assume que você está no diretório correto (/app)
+RUN dotnet publish -c Release -o /app/publish --no-restore
 
-# 2. ESTÁGIO DE EXECUÇÃO
-# Usa uma imagem runtime mais leve e segura (sem o SDK)
+# Estágio 2: Runtime (Execução)
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Define o ponto de entrada (Start Command)
-# O nome da DLL é o nome do projeto (pokemon-team-builder.dll)
+# Define o comando de inicialização da API
 ENTRYPOINT ["dotnet", "pokemon-team-builder.dll"]
