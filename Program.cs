@@ -26,6 +26,17 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Pokémon Team Builder API", Version = "v1" });
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowLocalhost",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:5173", "https://pokemon-extension.vercel.app/")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
