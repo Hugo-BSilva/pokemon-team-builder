@@ -2,7 +2,7 @@
 # 🧱 STAGE 1 — BUILD
 # ==============================
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-WORKDIR /src
+WORKDIR /app
 
 # Copia apenas o csproj (cache otimizado)
 COPY pokemon-team-builder.csproj ./
@@ -21,8 +21,7 @@ RUN dotnet publish -c Release -o /app/publish \
 # ==============================
 # 🚀 STAGE 2 — RUNTIME
 # ==============================
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-slim AS runtime
-WORKDIR /app
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 
 # Configurações de ambiente padrão para Render
 ENV ASPNETCORE_URLS=http://+:8080 \
@@ -31,10 +30,7 @@ ENV ASPNETCORE_URLS=http://+:8080 \
     DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
 # Copia build publicado da stage anterior
-COPY --from=build /app/publish ./
-
-# Expõe a porta usada pelo Render
-EXPOSE 8080
+COPY --from=build /app/publish .
 
 # Inicia a aplicação
 ENTRYPOINT ["dotnet", "pokemon-team-builder.dll"]
