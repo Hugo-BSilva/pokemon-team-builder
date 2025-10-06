@@ -1,23 +1,33 @@
-# Estágio 1: Build (Construção)
+# ---------- STAGE 1: Build ----------
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-COPY pokemon-team-builder.csproj .
-# Removemos a restauração do build anterior. Vamos usar o restore implícito no publish.
+# Copia apenas o csproj e restaura dependências (cache eficiente)
+COPY pokemon-team-builder.csproj ./
+RUN dotnet restore
 
-# 2. Copia todo o restante do código-fonte
+# Copia o resto do código
 COPY . .
 
-# 3. Publica a aplicação
-RUN dotnet publish -c Release -o /app/publish
+# Publica com ReadyToRun e trimming para startup mais rápido e menor tamanho
+RUN dotnet publish -c Release -o /app/publish \
+    -p:PublishReadyToRun=true \
+    -p:PublishTrimmed=true \
+    -p:TrimMode=partial \
+    -p:InvariantGlobalization=true
 
-# Estágio 2: Runtime (Execução)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+# ---------- STAGE 2: Runtime ----------
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS runtime
 WORKDIR /app
 
-# Adiciona a variável de ambiente para forçar a escuta na porta 8080 (padrão do Docker)
-ENV ASPNETCORE_URLS=http://+:8080
+# Define variáveis de ambiente recomendadas
+ENV ASPNETCORE_URLS=http://+:8080 \
+    DOTNET_EnableDiagnostics=0 \
+    DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 \
+    ASPNETCORE_ENVIRONMENT=Production
 
-COPY --from=build /app/publish .
+# Copia build otimizado
+COPY --from=build /app/publish ./
 
+# Usa dotnet diretamente
 ENTRYPOINT ["dotnet", "pokemon-team-builder.dll"]
