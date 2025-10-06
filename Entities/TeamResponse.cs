@@ -1,8 +1,17 @@
-﻿namespace pokemon_team_builder.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace pokemon_team_builder.Entities;
 
 public class TeamResponse
 {
-    public string GameVersion { get; set; }
-    public string Difficulty { get; set; }
-    public List<TeamPokemon> Team { get; set; }
+    [JsonPropertyName("gameVersion")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string GameVersion { get; set; } = string.Empty;
+
+    [JsonPropertyName("difficulty")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string Difficulty { get; set; } = string.Empty;
+
+    [JsonPropertyName("team")]
+    public List<TeamPokemon> Team { get; set; } = [];
 }

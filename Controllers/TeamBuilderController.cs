@@ -5,14 +5,9 @@ namespace pokemon_team_builder.Controllers;
 
 [ApiController]
 [Route("api/teambuilder")]
-public class TeamBuilderController : ControllerBase
+public class TeamBuilderController(ITeamBuilderService service) : ControllerBase
 {
-    private readonly ITeamBuilderService _service;
-
-    public TeamBuilderController(ITeamBuilderService service)
-    {
-        _service = service;
-    }
+    private readonly ITeamBuilderService _service = service;
 
     [HttpGet("generate")]
     public async Task<IActionResult> GenerateTeam([FromQuery] string version, [FromQuery] string difficulty)
@@ -24,8 +19,8 @@ public class TeamBuilderController : ControllerBase
 
         try
         {
-            // 💡 Chama o serviço que faz a comunicação com a IA
-            var teamResponse = await _service.GenerateTeamAsync(version, difficulty);
+            // Chama o serviço que faz a comunicação com a IA
+            var teamResponse = await _service.GenerateTeamAsync(version, difficulty, default);
 
             if (teamResponse == null || teamResponse.Team.Count == 0)
             {
